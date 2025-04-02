@@ -10,6 +10,19 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final _form = GlobalKey<FormState>();
+  var _isLogin = true;
+  var _enteredEmail = '';
+  var _enteredPassword = '';
+
+  void _submit() {
+    final isValid = _form.currentState!.validate();
+
+    if (isValid) {
+      _form.currentState!.save();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,6 +50,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Form(
+                      key: _form,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -55,10 +69,27 @@ class _AuthScreenState extends State<AuthScreen> {
                                 fontSize: 16,
                               ),
                             ),
+                            style: Theme.of(context).textTheme.bodyLarge!
+                                .copyWith(color: Colors.amber),
                             textCapitalization: TextCapitalization.none,
+
+                            validator: (value) {
+                              if (value == null ||
+                                  value.trim().isEmpty ||
+                                  !value.contains('@')) {
+                                return 'Please enter a valid email address.';
+                              }
+
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _enteredEmail = value!;
+                            },
                           ),
                           TextFormField(
                             obscureText: true,
+                            style: Theme.of(context).textTheme.bodyLarge!
+                                .copyWith(color: Colors.amber),
                             decoration: InputDecoration(
                               label: Text('Enter your password'),
                               labelStyle: Theme.of(
@@ -70,6 +101,50 @@ class _AuthScreenState extends State<AuthScreen> {
                                     ).colorScheme.secondaryFixedDim,
                                 fontSize: 16,
                               ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().length < 6) {
+                                return 'Password must be at least 6 characters long.';
+                              }
+
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _enteredPassword = value!;
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: _submit,
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStateProperty.all(
+                                Theme.of(
+                                  context,
+                                ).colorScheme.outline.withAlpha(90),
+                              ),
+                            ),
+                            child: Text(
+                              _isLogin ? 'Sign in' : 'Sign up',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge!.copyWith(
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.secondaryFixedDim,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _isLogin = !_isLogin;
+                              });
+                            },
+                            child: Text(
+                              _isLogin
+                                  ? 'Create an account'
+                                  : 'I already have an account',
                             ),
                           ),
                         ],
