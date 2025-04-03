@@ -5,7 +5,6 @@ class MessageBubble extends StatelessWidget {
   // Create a message bubble which is meant to be the first in the sequence.
   const MessageBubble.first({
     super.key,
-
     required this.username,
     required this.message,
     required this.isMe,
@@ -59,8 +58,9 @@ class MessageBubble extends StatelessWidget {
                 children: [
                   // First messages in the sequence provide a visual buffer at
                   // the top.
-                  if (isFirstInSequence) const SizedBox(height: 18),
-                  if (username != null)
+                  if (isFirstInSequence) SizedBox(height: 18),
+
+                  if (isFirstInSequence || username != null)
                     Padding(
                       padding: const EdgeInsets.only(left: 13, right: 13),
                       child: Text(
